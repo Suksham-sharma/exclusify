@@ -1,12 +1,12 @@
-import AppWalletProvider from "./Componenets/AppWalletProvider";
-import HomeScreen from "./Componenets/HomeScreen";
+import AppWalletProvider from "./components/AppWalletProvider";
+import LandingPage from "./pages/Landing";
 // import TelegramInviteGenerator from "./Componenets/LinkGenerator";
 
 function App() {
   return (
     <>
       <AppWalletProvider>
-        <HomeScreen />
+        <LandingPage />
       </AppWalletProvider>
     </>
   );
