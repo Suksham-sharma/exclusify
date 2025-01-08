@@ -43,7 +43,7 @@ export function Header() {
           transition={{ duration: 0.5 }}
         >
           <a href="/" className="mr-8 text-xl font-semibold">
-            CollabDocs
+            Exclusify
           </a>
         </motion.div>
         <nav className="flex flex-1 items-center gap-6 text-sm">
@@ -78,7 +78,7 @@ export function Header() {
           transition={{ duration: 0.5, delay: 0.6 }}
         >
           <Button className="rounded-full bg-zinc-900 text-white hover:bg-zinc-800">
-            Sign in →
+            Sign up →
           </Button>
         </motion.div>
       </div>
