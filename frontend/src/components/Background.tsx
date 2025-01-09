@@ -1,6 +1,7 @@
-export const Background = () => {
+export const Background = ({ styles }: { styles?: string }) => {
+  const className = `absolute -z-50 -top-20 right-0 ${styles}`;
   return (
-    <div className="absolute -z-50 -top-20 right-0">
+    <div className={className}>
       <img src="/image.png" />
     </div>
   );
