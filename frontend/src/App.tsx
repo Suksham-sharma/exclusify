@@ -1,13 +1,19 @@
-import AppWalletProvider from "./components/AppWalletProvider";
-import { SignInPage } from "./components/SignIn";
-// import TelegramInviteGenerator from "./Componenets/LinkGenerator";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import SigninPage from "./pages/SigninPage";
+import LandingPage from "./pages/Landing";
+import SignupPage from "./pages/SignupPage";
+import GettingStarted from "./pages/GettingStarted";
 
 function App() {
   return (
     <>
-      <AppWalletProvider>
-        <SignInPage />
-      </AppWalletProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<GettingStarted />} />
+          <Route path="/signin" element={<SigninPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }

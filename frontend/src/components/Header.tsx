@@ -2,8 +2,10 @@ import { motion } from "framer-motion";
 import { useScroll, useTransform } from "framer-motion";
 import { useEffect, useState } from "react";
 import Button from "./Button";
+import { useNavigate } from "react-router-dom";
 
 export function Header() {
+  const navigate = useNavigate();
   const { scrollY } = useScroll();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -78,7 +80,7 @@ export function Header() {
           transition={{ duration: 0.5, delay: 0.6 }}
         >
           <Button className="rounded-full bg-zinc-900 text-white hover:bg-zinc-800">
-            Sign up →
+            <div onClick={() => navigate("/signin")}> Sign In →</div>
           </Button>
         </motion.div>
       </div>
