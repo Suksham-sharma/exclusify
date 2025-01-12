@@ -13,6 +13,8 @@ type FormData = {
   };
   nft: {
     name: string;
+    tokenStandard: string;
+    groupValue: string;
     nftId: string;
   };
   community: {
@@ -31,6 +33,8 @@ const initialFormData: FormData = {
   nft: {
     name: "",
     nftId: "",
+    tokenStandard: "",
+    groupValue: "",
   },
   community: {
     discordUrl: "",

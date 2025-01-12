@@ -1,24 +1,30 @@
 "use client";
-
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import * as z from "zod";
+import { toast } from "sonner";
+import { getCollectionInfo } from "../../api/nft";
 
 const formSchema = z.object({
   name: z.string().min(2, "Collection name must be at least 2 characters"),
   nftId: z.string().min(1, "NFT ID is required"),
+  tokenStandard: z.string().min(1, "Token Standard is required"),
+  groupValue: z.string().min(1, "Group Value is required"),
 });
 
 interface NftDetailsProps {
   data: {
     name: string;
     nftId: string;
+    tokenStandard: string;
+    groupValue: string;
   };
   onUpdate: (data: any) => void;
   onNext: () => void;
   onBack: () => void;
 }
-import { useState } from "react";
 
 export const NftDetails = ({
   data,
@@ -27,13 +33,12 @@ export const NftDetails = ({
   onBack,
 }: NftDetailsProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [nftInfo, setNftInfo] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(formSchema),
@@ -41,42 +46,35 @@ export const NftDetails = ({
   });
 
   const nftId = watch("nftId");
+  const groupValue = watch("groupValue");
+
+  const {
+    data: NftDetails,
+    isError,
+    isRefetching,
+    refetch,
+  } = useQuery({
+    queryKey: ["nftInfo", nftId],
+    queryFn: () => getCollectionInfo(nftId),
+    enabled: false,
+    staleTime: 1000 * 60,
+  });
 
   const handleGetInformation = async () => {
     if (!nftId) {
-      setError("Please enter an NFT ID first");
+      toast.error("Please enter an NFT ID first");
       return;
     }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch(
-        `https://jsonplaceholder.typicode.com/todos/1`
-      );
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch NFT information");
-      }
-
-      setNftInfo(data);
-    } catch (err: unknown) {
-      setError("Sorry, unable to retrieve NFT information. Please try again.");
-      console.log(err);
-      setNftInfo(null);
-    } finally {
-      setIsLoading(false);
-    }
+    await refetch();
+    if (isError) return toast.error("Something went wrong");
+    if (!NftDetails) return toast.error("No data found");
+    setValue("name", NftDetails.collectionName);
+    setValue("tokenStandard", NftDetails.tokenStandard);
+    setValue("groupValue", NftDetails.groupValue);
   };
 
   const onSubmit = (values: any) => {
-    if (!nftInfo) {
-      setError("Please get NFT information before proceeding");
-      return;
-    }
-    onUpdate({ ...values, nftInfo });
+    onUpdate({ ...values });
     onNext();
   };
 
@@ -87,28 +85,7 @@ export const NftDetails = ({
         <p className="text-gray-500">Configure your NFT collection</p>
       </div>
 
-      <div className="space-y-6">
-        <div className="space-y-2">
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Collection Name
-          </label>
-          <input
-            {...register("name")}
-            id="name"
-            type="text"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-shadow"
-            placeholder="My Awesome NFTs"
-          />
-          {errors.name && (
-            <p className="text-sm text-red-500">
-              {errors.name.message as string}
-            </p>
-          )}
-        </div>
-
+      <div className="space-y-4">
         <div className="space-y-2">
           <label
             htmlFor="nftId"
@@ -127,10 +104,10 @@ export const NftDetails = ({
             <button
               type="button"
               onClick={handleGetInformation}
-              disabled={isLoading}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors disabled:opacity-50"
+              disabled={isRefetching}
+              className="px-4 py-2 bg-blue-500 text-gray-100 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors disabled:opacity-50"
             >
-              {isLoading ? "Loading..." : "Get Information"}
+              {isRefetching ? "Loading..." : "Get Information"}
             </button>
           </div>
           {errors.nftId && (
@@ -139,39 +116,79 @@ export const NftDetails = ({
             </p>
           )}
         </div>
+        {groupValue && (
+          <>
+            <div className="flex gap-x-4">
+              <div className="space-y-2 w-[70%]">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Collection Name
+                </label>
+                <input
+                  readOnly
+                  {...register("name")}
+                  id="name"
+                  type="text"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg   outline-none transition-shadow"
+                  placeholder="My Awesome NFTs"
+                />
+              </div>
 
-        {error && (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-sm text-red-600">{error}</p>
-          </div>
+              <div className="space-y-2">
+                <label
+                  htmlFor="tokenStandard"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Token Standard
+                </label>
+                <input
+                  readOnly
+                  {...register("tokenStandard")}
+                  id="tokenStandard"
+                  type="text"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg   outline-none transition-shadow"
+                  placeholder="ERC-721"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label
+                htmlFor="groupValue"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Group Value
+              </label>
+              <input
+                readOnly
+                {...register("groupValue")}
+                id="groupValue"
+                type="text"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg   outline-none transition-shadow"
+                placeholder="0x1234..."
+              />
+            </div>
+
+            <div className="flex justify-between ">
+              <button
+                type="button"
+                onClick={onBack}
+                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+              >
+                Previous Step
+              </button>
+              <button
+                type="submit"
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-70"
+                disabled={!groupValue}
+              >
+                Next Step
+              </button>
+            </div>
+          </>
         )}
-
-        {nftInfo && (
-          <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-            <h3 className="font-medium text-green-800">
-              NFT Information Retrieved
-            </h3>
-            <pre className="mt-2 text-sm text-green-700 whitespace-pre-wrap">
-              {JSON.stringify(nftInfo, null, 2)}
-            </pre>
-          </div>
-        )}
-      </div>
-
-      <div className="flex justify-between">
-        <button
-          type="button"
-          onClick={onBack}
-          className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
-        >
-          Previous Step
-        </button>
-        <button
-          type="submit"
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-        >
-          Next Step
-        </button>
       </div>
     </form>
   );
