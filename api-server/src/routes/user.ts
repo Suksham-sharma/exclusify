@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { userManager } from "../../lib/userManager/userManager";
+import { userManager } from "../lib/userManager/userManager";
 
 export const userRouter = Router();
 

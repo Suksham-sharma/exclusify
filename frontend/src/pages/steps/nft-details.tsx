@@ -6,40 +6,77 @@ import * as z from "zod";
 
 const formSchema = z.object({
   name: z.string().min(2, "Collection name must be at least 2 characters"),
-  symbol: z.string().min(2, "Symbol must be at least 2 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  supply: z.string().regex(/^\d+$/, "Supply must be a number"),
+  nftId: z.string().min(1, "NFT ID is required"),
 });
 
 interface NftDetailsProps {
   data: {
     name: string;
-    symbol: string;
-    description: string;
-    supply: string;
+    nftId: string;
   };
   onUpdate: (data: any) => void;
   onNext: () => void;
   onBack: () => void;
 }
+import { useState } from "react";
 
-export function NftDetails({
+export const NftDetails = ({
   data,
   onUpdate,
   onNext,
   onBack,
-}: NftDetailsProps) {
+}: NftDetailsProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [nftInfo, setNftInfo] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: data,
   });
 
+  const nftId = watch("nftId");
+
+  const handleGetInformation = async () => {
+    if (!nftId) {
+      setError("Please enter an NFT ID first");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `https://jsonplaceholder.typicode.com/todos/1`
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch NFT information");
+      }
+
+      setNftInfo(data);
+    } catch (err: unknown) {
+      setError("Sorry, unable to retrieve NFT information. Please try again.");
+      console.log(err);
+      setNftInfo(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const onSubmit = (values: any) => {
-    onUpdate(values);
+    if (!nftInfo) {
+      setError("Please get NFT information before proceeding");
+      return;
+    }
+    onUpdate({ ...values, nftInfo });
     onNext();
   };
 
@@ -74,66 +111,51 @@ export function NftDetails({
 
         <div className="space-y-2">
           <label
-            htmlFor="symbol"
+            htmlFor="nftId"
             className="block text-sm font-medium text-gray-700"
           >
-            Symbol
+            NFT ID
           </label>
-          <input
-            {...register("symbol")}
-            id="symbol"
-            type="text"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-shadow"
-            placeholder="AWSM"
-          />
-          {errors.symbol && (
+          <div className="flex gap-4">
+            <input
+              {...register("nftId")}
+              id="nftId"
+              type="text"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-shadow"
+              placeholder="0x1234..."
+            />
+            <button
+              type="button"
+              onClick={handleGetInformation}
+              disabled={isLoading}
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors disabled:opacity-50"
+            >
+              {isLoading ? "Loading..." : "Get Information"}
+            </button>
+          </div>
+          {errors.nftId && (
             <p className="text-sm text-red-500">
-              {errors.symbol.message as string}
+              {errors.nftId.message as string}
             </p>
           )}
         </div>
 
-        <div className="space-y-2">
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Description
-          </label>
-          <textarea
-            {...register("description")}
-            id="description"
-            rows={4}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-shadow resize-none"
-            placeholder="Describe your NFT collection..."
-          />
-          {errors.description && (
-            <p className="text-sm text-red-500">
-              {errors.description.message as string}
-            </p>
-          )}
-        </div>
+        {error && (
+          <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-600">{error}</p>
+          </div>
+        )}
 
-        <div className="space-y-2">
-          <label
-            htmlFor="supply"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Total Supply
-          </label>
-          <input
-            {...register("supply")}
-            id="supply"
-            type="text"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-shadow"
-            placeholder="10000"
-          />
-          {errors.supply && (
-            <p className="text-sm text-red-500">
-              {errors.supply.message as string}
-            </p>
-          )}
-        </div>
+        {nftInfo && (
+          <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+            <h3 className="font-medium text-green-800">
+              NFT Information Retrieved
+            </h3>
+            <pre className="mt-2 text-sm text-green-700 whitespace-pre-wrap">
+              {JSON.stringify(nftInfo, null, 2)}
+            </pre>
+          </div>
+        )}
       </div>
 
       <div className="flex justify-between">
@@ -153,4 +175,6 @@ export function NftDetails({
       </div>
     </form>
   );
-}
+};
+
+export default NftDetails;
