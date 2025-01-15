@@ -1,20 +1,24 @@
-"use client";
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { ChevronDown } from "lucide-react";
 
 const formSchema = z.object({
-  discordUrl: z.string().url("Invalid Discord URL"),
-  twitterHandle: z.string().min(1, "Twitter handle is required"),
-  websiteUrl: z.string().url("Invalid website URL"),
+  communityName: z.string().url("Invalid Discord URL"),
+  description: z.string().min(1, "Twitter handle is required"),
+  type: z.string().url("Invalid website URL"),
 });
 
+enum CommunityType {
+  Open = "open",
+  Closed = "closed",
+  Custom = "custom",
+}
 interface CommunityDetailsProps {
   data: {
-    discordUrl: string;
-    twitterHandle: string;
-    websiteUrl: string;
+    communityName: string;
+    description: string;
+    type: CommunityType;
   };
   onUpdate: (data: any) => void;
   onSubmit: () => void;
@@ -51,65 +55,61 @@ export function CommunityDetails({
       <div className="space-y-6">
         <div className="space-y-2">
           <label
-            htmlFor="discordUrl"
+            htmlFor="communityName"
             className="block text-sm font-medium text-gray-700"
           >
-            Discord Server URL
+            Community Name
           </label>
           <input
-            {...register("discordUrl")}
-            id="discordUrl"
+            {...register("communityName")}
+            id="communityName"
             type="url"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-shadow"
-            placeholder="https://discord.gg/..."
+            placeholder="AllianceDAO"
           />
-          {errors.discordUrl && (
+          {errors.communityName && (
             <p className="text-sm text-red-500">
-              {errors.discordUrl.message as string}
+              {errors.communityName.message as string}
             </p>
           )}
         </div>
 
         <div className="space-y-2">
           <label
-            htmlFor="twitterHandle"
+            htmlFor="Description"
             className="block text-sm font-medium text-gray-700"
           >
-            Twitter Handle
+            Description
           </label>
           <input
-            {...register("twitterHandle")}
-            id="twitterHandle"
+            {...register("description")}
+            id="Description"
             type="text"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-shadow"
-            placeholder="@username"
+            placeholder="Details about your community...."
           />
-          {errors.twitterHandle && (
+          {errors.description && (
             <p className="text-sm text-red-500">
-              {errors.twitterHandle.message as string}
+              {errors.description.message as string}
             </p>
           )}
         </div>
 
         <div className="space-y-2">
           <label
-            htmlFor="websiteUrl"
+            htmlFor="type"
             className="block text-sm font-medium text-gray-700"
           >
-            Website URL
+            Community Type
           </label>
-          <input
-            {...register("websiteUrl")}
-            id="websiteUrl"
-            type="url"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-shadow"
-            placeholder="https://..."
+
+          <AccessTypeDropdown
+            register={(type: string) => ({
+              onChange: (e: React.ChangeEvent<HTMLSelectElement>) =>
+                console.log(e.target.value),
+              type,
+            })}
           />
-          {errors.websiteUrl && (
-            <p className="text-sm text-red-500">
-              {errors.websiteUrl.message as string}
-            </p>
-          )}
         </div>
       </div>
 
@@ -131,3 +131,44 @@ export function CommunityDetails({
     </form>
   );
 }
+
+interface AccessTypeDropdownProps {
+  register: any;
+}
+
+export const AccessTypeDropdown: React.FC<AccessTypeDropdownProps> = ({
+  register,
+}) => {
+  return (
+    <div className="relative">
+      <select
+        {...register("type")}
+        id="type"
+        className="w-full h-12 pl-4 pr-10 bg-white border border-gray-200 rounded-xl 
+                   appearance-none cursor-pointer
+                   shadow-sm
+                   hover:border-gray-300
+                   focus:border-blue-500 focus:ring-4 focus:ring-blue-100
+                   outline-none transition-all duration-200
+                   text-gray-900 text-base"
+      >
+        <option value="" disabled>
+          Select access type...
+        </option>
+        <option value={CommunityType.Open} className="py-2">
+          Open (Anyone can join)
+        </option>
+        <option value={CommunityType.Closed} className="py-2">
+          Closed (Invite only)
+        </option>
+        <option value={CommunityType.Custom} className="py-2">
+          Custom (NFT requirement)
+        </option>
+      </select>
+
+      <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-gray-500">
+        <ChevronDown className="w-5 h-5" />
+      </div>
+    </div>
+  );
+};

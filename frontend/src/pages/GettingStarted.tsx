@@ -5,6 +5,12 @@ import { ManagerDetails } from "./steps/manager-details";
 import { NftDetails } from "./steps/nft-details";
 import { CommunityDetails } from "./steps/community-info";
 import { Progress } from "./steps/progressbar";
+
+enum CommunityType {
+  Open = "open",
+  Closed = "closed",
+  Custom = "custom",
+}
 type FormData = {
   manager: {
     firstName: string;
@@ -18,9 +24,9 @@ type FormData = {
     nftId: string;
   };
   community: {
-    discordUrl: string;
-    twitterHandle: string;
-    websiteUrl: string;
+    communityName: string;
+    description: string;
+    type: CommunityType;
   };
 };
 
@@ -37,9 +43,9 @@ const initialFormData: FormData = {
     groupValue: "",
   },
   community: {
-    discordUrl: "",
-    twitterHandle: "",
-    websiteUrl: "",
+    communityName: "",
+    description: "",
+    type: CommunityType.Open,
   },
 };
 
