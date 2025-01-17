@@ -142,43 +142,38 @@ const MetricCard: React.FC<DashboardMetric> = ({
   change,
   subtext,
 }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-    className="relative overflow-hidden bg-gradient-to-br from-white to-zinc-50/50 backdrop-blur-sm rounded-3xl shadow-sm border border-zinc-100 p-8 hover:shadow-xl transition-all duration-300"
-  >
-    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-zinc-100/20 to-transparent rounded-full -mr-16 -mt-16 blur-3xl" />
+  <div className="relative overflow-hidden bg-gradient-to-br from-cyan-100 via-white backdrop-blur-md rounded-3xl shadow-lg border border-gray-300 hover:shadow-xl hover:-translate-y-1 transition-transform duration-300 p-8">
+    {/* Decorative Background */}
+    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/40 to-transparent rounded-full -mr-16 -mt-16 blur-3xl" />
+    <div className="absolute bottom-0 left-0 w-28 h-28 bg-gradient-to-tl from-pink-200/20 to-transparent rounded-full -ml-12 -mb-12 blur-3xl" />
 
-    <div className="relative">
+    <div className="relative z-10">
+      {/* Icon with Animation */}
       <motion.div
         whileHover={{ scale: 1.1 }}
-        className="inline-flex items-center justify-center w-12 h-12 mb-6 rounded-2xl bg-gradient-to-br from-zinc-100 to-zinc-50 shadow-sm border border-zinc-100"
+        className="inline-flex items-center justify-center w-14 h-14 mb-6 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 shadow-md border border-gray-300"
       >
-        <Icon className="h-6 w-6 text-zinc-800" />
+        <Icon className="h-7 w-7 text-gray-800" />
       </motion.div>
 
+      {/* Title and Metrics */}
       <div className="space-y-2">
-        <h3 className="text-sm font-medium text-zinc-500 uppercase tracking-wider">
+        <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
           {title}
         </h3>
         <div className="flex items-baseline gap-2">
-          <div className="text-3xl font-semibold text-zinc-900">{value}</div>
+          <div className="text-4xl font-bold text-gray-900">{value}</div>
           {change && (
             <div className="flex items-center gap-1">
-              <ArrowUpRight className="h-4 w-4 text-emerald-500" />
-              <p className="text-sm font-medium text-emerald-500">{change}</p>
+              <ArrowUpRight className="h-5 w-5 text-green-500" />
+              <p className="text-sm font-medium text-green-500">{change}</p>
             </div>
           )}
         </div>
-        {subtext && (
-          <p className="text-sm text-zinc-500 font-medium">{subtext}</p>
-        )}
+        {subtext && <p className="text-sm text-gray-500">{subtext}</p>}
       </div>
     </div>
-
-    <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-tl from-zinc-100/20 to-transparent rounded-full -mr-12 -mb-12 blur-2xl" />
-  </motion.div>
+  </div>
 );
 
 const ActivityItem: React.FC<Omit<Activity, "type">> = ({
@@ -230,17 +225,17 @@ const ActionButton: React.FC<QuickAction> = ({
 );
 
 export default function Home() {
-  const isSetup = true;
+  const isSetup = false;
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
+  // const containerVariants = {
+  //   hidden: { opacity: 0 },
+  //   visible: {
+  //     opacity: 1,
+  //     transition: {
+  //       staggerChildren: 0.1,
+  //     },
+  //   },
+  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-zinc-100">
@@ -252,62 +247,66 @@ export default function Home() {
 
         <main className="flex-1 lg:pl-20">
           <motion.div
-            variants={containerVariants}
+            // variants={containerVariants}
             initial="hidden"
             animate="visible"
             className="h-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 space-y-6 sm:space-y-8"
           >
-            {!isSetup && <SetupNotice />}
+            {!isSetup ? (
+              <SetupNotice />
+            ) : (
+              <>
+                <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 auto-rows-fr">
+                  {DASHBOARD_METRICS.map((metric, index) => (
+                    <MetricCard key={index} {...metric} />
+                  ))}
+                </div>
 
-            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 auto-rows-fr">
-              {DASHBOARD_METRICS.map((metric, index) => (
-                <MetricCard key={index} {...metric} />
-              ))}
-            </div>
-
-            <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-zinc-100 p-6"
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-medium tracking-tight text-zinc-900">
-                    Recent Activity
-                  </h2>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    className="text-sm text-zinc-900 hover:text-zinc-700 font-medium"
+                <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-zinc-100 p-6"
                   >
-                    View All
-                  </motion.button>
-                </div>
-                <div className="space-y-6">
-                  {RECENT_ACTIVITIES.map((activity) => (
-                    <ActivityItem key={activity.id} {...activity} />
-                  ))}
-                </div>
-              </motion.div>
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="text-lg font-medium tracking-tight text-zinc-900">
+                        Recent Activity
+                      </h2>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        className="text-sm text-zinc-900 hover:text-zinc-700 font-medium"
+                      >
+                        View All
+                      </motion.button>
+                    </div>
+                    <div className="space-y-6">
+                      {RECENT_ACTIVITIES.map((activity) => (
+                        <ActivityItem key={activity.id} {...activity} />
+                      ))}
+                    </div>
+                  </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-zinc-100 p-6"
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-medium tracking-tight text-zinc-900">
-                    Quick Actions
-                  </h2>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                    className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-zinc-100 p-6"
+                  >
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="text-lg font-medium tracking-tight text-zinc-900">
+                        Quick Actions
+                      </h2>
+                    </div>
+                    <div className="space-y-4">
+                      {QUICK_ACTIONS.map((action) => (
+                        <ActionButton key={action.id} {...action} />
+                      ))}
+                    </div>
+                  </motion.div>
                 </div>
-                <div className="space-y-4">
-                  {QUICK_ACTIONS.map((action) => (
-                    <ActionButton key={action.id} {...action} />
-                  ))}
-                </div>
-              </motion.div>
-            </div>
+              </>
+            )}
           </motion.div>
         </main>
       </div>

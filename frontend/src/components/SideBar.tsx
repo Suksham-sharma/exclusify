@@ -22,7 +22,7 @@ export function Sidebar() {
   const location = useLocation();
 
   return (
-    <div className="flex w-20 flex-col items-center gap-6 border-r bg-white/80 backdrop-blur-sm py-8 left-0 top-0 min-h-screen relative shadow-lg">
+    <div className="flex w-20 flex-col items-center gap-6 border-r bg-white/80 backdrop-blur-sm py-8 left-0 top-0 min-h-screen relative shadow-lg z-10">
       <div className="mb-8">
         <div className="h-10 w-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
           <div className="h-6 w-6 bg-white rounded-lg" />
