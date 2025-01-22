@@ -24,13 +24,11 @@ export function SetupNotice() {
           tailored experiences for your NFT holders.
         </motion.p>
       </motion.div>
-      <motion.div className="mt-10 flex items-center gap-4">
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Button className="rounded-full bg-blue-800 px-8 text-white hover:bg-blue-800">
-            Get Started
-          </Button>
-        </motion.div>
-      </motion.div>
+      <div className="mt-10 flex items-center gap-4">
+        <Button className="rounded-full bg-blue-600 px-8 text-white hover:bg-blue-800 ease-in-out duration-75">
+          Get Started
+        </Button>
+      </div>
     </section>
   );
 }

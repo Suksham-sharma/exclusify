@@ -5,6 +5,7 @@ import GettingStarted from "./pages/GettingStarted";
 import { Toaster } from "sonner";
 import Home from "./pages/Home";
 import LandingPage from "./pages/Landing";
+import CreateWebsite from "./pages/CreateWebsite";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/getting-started" element={<GettingStarted />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/create-website" element={<CreateWebsite />} />
         </Routes>
       </BrowserRouter>
       <Toaster />

@@ -247,7 +247,6 @@ export default function Home() {
 
         <main className="flex-1 lg:pl-20">
           <motion.div
-            // variants={containerVariants}
             initial="hidden"
             animate="visible"
             className="h-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 space-y-6 sm:space-y-8"
