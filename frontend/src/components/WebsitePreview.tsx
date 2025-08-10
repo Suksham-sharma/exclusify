@@ -1,33 +1,7 @@
-import { Eye } from "lucide-react";
 import { getHeroSection } from "./hero-sections";
 import { WebsiteFormData } from "./WebsiteForm";
-
-const THEME_STYLES = [
-  {
-    id: "minimal",
-    label: "Minimal",
-    description: "Clean and simple design",
-    preview: "bg-gray-50",
-  },
-  {
-    id: "modern",
-    label: "Modern",
-    description: "Contemporary and sleek",
-    preview: "bg-gradient-to-br from-blue-50 to-indigo-100",
-  },
-  {
-    id: "classic",
-    label: "Classic",
-    description: "Timeless and traditional",
-    preview: "bg-amber-50",
-  },
-  {
-    id: "bold",
-    label: "Bold",
-    description: "Strong and impactful",
-    preview: "bg-gradient-to-br from-purple-100 to-pink-100",
-  },
-];
+import { useEffect, useState } from "react";
+import { Maximize2, X } from "lucide-react";
 
 interface WebsitePreviewProps {
   formData: WebsiteFormData;
@@ -38,28 +12,67 @@ export const WebsitePreview = ({
   formData,
   selectedStyle,
 }: WebsitePreviewProps) => {
-  // Get the appropriate hero section component based on the selected style
   const HeroSectionComponent = getHeroSection(selectedStyle);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // Close on ESC
+  useEffect(() => {
+    if (!isExpanded) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsExpanded(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isExpanded]);
 
   return (
     <div className="h-full flex flex-col">
-      {/* Enhanced Browser Bar */}
-      <div className="flex items-center gap-2 mb-4 p-3 bg-gradient-to-r from-gray-100 to-gray-50 rounded-lg border border-gray-200/50 shadow-sm">
-        <Eye className="h-4 w-4 text-gray-600" />
+      <div className="flex items-center gap-2 mb-4 px-3 py-2 bg-gradient-to-r from-gray-100 to-gray-50 rounded-lg border border-gray-200/50 shadow-sm">
         <span className="text-sm font-medium text-gray-700">Live Preview</span>
-        <div className="ml-auto flex gap-1">
-          <div className="w-3 h-3 bg-red-400 rounded-full shadow-sm" />
-          <div className="w-3 h-3 bg-yellow-400 rounded-full shadow-sm" />
-          <div className="w-3 h-3 bg-green-400 rounded-full shadow-sm" />
-        </div>
+        <button
+          type="button"
+          onClick={() => setIsExpanded(true)}
+          className="ml-auto inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 shadow hover:bg-gray-50 active:scale-[.98] transition"
+          aria-label="Expand preview"
+        >
+          <Maximize2 className="w-4 h-4" />
+          Expand
+        </button>
       </div>
 
-      {/* Dynamic Hero Section */}
       <div className="flex-1 rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg">
         <HeroSectionComponent formData={formData} />
       </div>
+
+      {isExpanded && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+          onClick={() => setIsExpanded(false)}
+        >
+          <div
+            className="relative w-[95%] h-[95%] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-4 py-2 border-b bg-gray-50/80 backdrop-blur-sm">
+              <span className="text-sm font-medium text-gray-700">Preview</span>
+              <button
+                type="button"
+                onClick={() => setIsExpanded(false)}
+                className="inline-flex items-center gap-1 rounded-md bg-gray-800 text-white px-3 py-1.5 text-xs font-medium shadow hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
+                aria-label="Close expanded preview"
+              >
+                <X className="w-4 h-4" />
+                <span>Close</span>
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto p-4 bg-white">
+              <div className="h-full rounded-md border border-gray-200">
+                <HeroSectionComponent formData={formData} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
-
-export { THEME_STYLES };

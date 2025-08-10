@@ -15,20 +15,18 @@ import {
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { ColorPicker } from "./ColorPicker";
-
-// Theme styles definition
 const THEME_STYLES = [
   {
     id: "minimal",
     label: "Minimal",
     description: "Clean and simple design",
-    preview: "bg-gray-50",
+    preview: "bg-gray-100",
   },
   {
     id: "modern",
     label: "Modern",
     description: "Contemporary and sleek",
-    preview: "bg-gradient-to-br from-blue-50 to-indigo-100",
+    preview: "bg-blue-50",
   },
   {
     id: "classic",
@@ -40,7 +38,7 @@ const THEME_STYLES = [
     id: "bold",
     label: "Bold",
     description: "Strong and impactful",
-    preview: "bg-gradient-to-br from-purple-100 to-pink-100",
+    preview: "bg-purple-50",
   },
 ];
 
@@ -159,54 +157,39 @@ export default function WebsiteForm({
       transition={{ duration: 0.6, delay: 0.2 }}
     >
       <div className="h-full flex flex-col">
-        {/* Enhanced Tab Navigation */}
-        <div className="relative p-2 bg-gradient-to-r from-gray-50/80 to-blue-50/50 border-b border-gray-200/60">
-          <div className="flex bg-white/60 rounded-2xl p-1 shadow-inner">
+        <div className="relative p-2 bg-white border-b border-slate-200">
+          <div className="flex rounded-xl p-1 bg-slate-100 border border-slate-200/70 gap-2">
             <motion.button
               type="button"
               onClick={() => setActiveTab("content")}
-              className={`relative flex-1 px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-300 ${
+              className={`relative flex-1 px-5 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200 border ${
                 activeTab === "content"
                   ? "text-blue-700 bg-white shadow-lg shadow-blue-100/50"
-                  : "text-gray-600 hover:text-gray-800 hover:bg-white/50"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-white/20"
               }`}
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: activeTab === "content" ? 1 : 1.01 }}
               whileTap={{ scale: 0.98 }}
             >
               <div className="flex items-center justify-center gap-2">
                 <Layout className="h-4 w-4" />
                 <span>Content</span>
               </div>
-              {activeTab === "content" && (
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-xl"
-                  layoutId="activeTab"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                />
-              )}
             </motion.button>
             <motion.button
               type="button"
               onClick={() => setActiveTab("styles")}
-              className={`relative flex-1 px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-300 ${
+              className={`relative flex-1 px-5 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200 border ${
                 activeTab === "styles"
-                  ? "text-purple-700 bg-white shadow-lg shadow-purple-100/50"
-                  : "text-gray-600 hover:text-gray-800 hover:bg-white/50"
+                  ? "bg-white border-slate-300 text-slate-900 shadow-sm"
+                  : "bg-transparent border-transparent text-slate-500 hover:text-slate-700 hover:bg-white"
               }`}
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: activeTab === "styles" ? 1 : 1.01 }}
               whileTap={{ scale: 0.98 }}
             >
               <div className="flex items-center justify-center gap-2">
                 <Palette className="h-4 w-4" />
                 <span>Styling</span>
               </div>
-              {activeTab === "styles" && (
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl"
-                  layoutId="activeTab"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                />
-              )}
             </motion.button>
           </div>
         </div>
@@ -328,10 +311,9 @@ export default function WebsiteForm({
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.4 }}
-                  className="space-y-6"
+                  className="space-y-6 min-h-[calc(100vh-360px)]"
                 >
-                  {/* Enhanced Theme Section */}
-                  <div className="space-y-5">
+                  <div className="flex flex-col space-y-5">
                     <div className="flex items-center gap-3 pb-3 border-b border-gray-200/50">
                       <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg">
                         <Palette className="h-4 w-4 text-white" />
@@ -357,7 +339,6 @@ export default function WebsiteForm({
                     </div>
                   </div>
 
-                  {/* Enhanced Style Selection */}
                   <div className="space-y-5">
                     <h4 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                       <Sparkles className="h-4 w-4" />
@@ -367,36 +348,17 @@ export default function WebsiteForm({
                       {THEME_STYLES.map((style) => (
                         <motion.label
                           key={style.id}
-                          className={`relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+                          className={`relative flex flex-col rounded-xl border cursor-pointer transition-colors duration-200 overflow-hidden p-4 ${
                             formData.theme?.style === style.id
-                              ? "border-purple-500 bg-purple-50/50 shadow-lg shadow-purple-100/50"
-                              : "border-gray-200 bg-white/30 hover:border-purple-300 hover:bg-purple-50/30"
+                              ? "border-blue-600 bg-white shadow-sm ring-1 ring-blue-600/30"
+                              : "border-slate-200 bg-white hover:border-blue-400"
                           }`}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
+                          whileHover={{ scale: 1.015 }}
+                          whileTap={{ scale: 0.97 }}
                         >
-                          <div className="flex items-center gap-3 mb-2">
-                            <input
-                              type="radio"
-                              value={style.id}
-                              {...register("theme.style")}
-                              className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500"
-                            />
-                            <div
-                              className={`w-5 h-5 rounded-full ${style.preview} shadow-sm border-2 border-white`}
-                            />
-                          </div>
-                          <div>
-                            <div className="font-semibold text-gray-900 text-sm mb-1">
-                              {style.label}
-                            </div>
-                            <div className="text-xs text-gray-600 leading-relaxed">
-                              {style.description}
-                            </div>
-                          </div>
                           {formData.theme?.style === style.id && (
                             <motion.div
-                              className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-xl"
+                              className="absolute inset-0 z-0 bg-gradient-to-br from-blue-50/80 to-blue-100/60"
                               layoutId="selectedStyle"
                               transition={{
                                 type: "spring",
@@ -405,6 +367,24 @@ export default function WebsiteForm({
                               }}
                             />
                           )}
+                          <div className="relative z-10 flex gap-3 items-start">
+                            <input
+                              type="radio"
+                              value={style.id}
+                              {...register("theme.style")}
+                              className="mt-1 w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500 shrink-0"
+                            />
+                            <div className="flex-1 space-y-1">
+                              <div className="flex items-center justify-between">
+                                <div className="font-medium text-slate-900 text-sm tracking-tight">
+                                  {style.label}
+                                </div>
+                              </div>
+                              <div className="text-xs text-slate-600 leading-relaxed">
+                                {style.description}
+                              </div>
+                            </div>
+                          </div>
                         </motion.label>
                       ))}
                     </div>
@@ -413,31 +393,14 @@ export default function WebsiteForm({
               )}
             </div>
 
-            {/* Enhanced Generate Button */}
-            <div className="pt-6 mt-6 border-t border-gray-200/50">
+            <div className="pt-6 mt-6 border-t border-slate-200/70">
               <motion.button
                 type="submit"
                 disabled={isGenerating}
-                className="w-full h-14 bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-2xl 
-                         hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-4 
-                         focus:ring-blue-500/30 transition-all duration-300 font-bold text-base 
-                         shadow-xl shadow-blue-500/25 disabled:opacity-70 disabled:cursor-not-allowed 
-                         flex items-center justify-center gap-3 relative overflow-hidden"
-                whileHover={{ scale: isGenerating ? 1 : 1.02 }}
-                whileTap={{ scale: isGenerating ? 1 : 0.98 }}
+                className="w-full h-14 bg-blue-600 text-white rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/30 transition-colors font-semibold text-base shadow-sm disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3 relative"
+                whileHover={{ scale: isGenerating ? 1 : 1.015 }}
+                whileTap={{ scale: isGenerating ? 1 : 0.97 }}
               >
-                {/* Animated background */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-indigo-400/20"
-                  animate={{
-                    x: isGenerating ? ["-100%", "100%"] : 0,
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: isGenerating ? Infinity : 0,
-                    ease: "linear",
-                  }}
-                />
                 <div className="relative flex items-center gap-3">
                   {isGenerating ? (
                     <>
